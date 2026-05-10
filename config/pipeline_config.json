@@ -1,0 +1,16 @@
+{
+  "project_name": "azure-databricks-medallion-lakehouse-portfolio",
+  "owner": "Wakiloo7",
+  "architecture": "medallion",
+  "layers": {
+    "bronze": "raw ingested parquet data",
+    "silver": "cleaned and validated Delta tables",
+    "gold": "business-ready analytical datasets"
+  },
+  "quality_rules": [
+    "customer_id must not be null",
+    "order_id must be unique",
+    "order_amount must be positive",
+    "orders must reference valid customers and products"
+  ]
+}

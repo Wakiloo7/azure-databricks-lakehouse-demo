@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Databricks / local
+.dbc/
+.databricks/
+.ipynb_checkpoints/
+
+# Secrets
+.env
+*.pem
+*.key
+
+# Local outputs
+output/
+tmp/
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
