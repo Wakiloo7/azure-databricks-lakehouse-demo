@@ -1,0 +1,32 @@
+name: Deploy Synapse SQL Layer
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "synapse/sql/**"
+      - "synapse/deploy/**"
+
+jobs:
+  deploy-synapse-sql:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install sqlcmd
+        run: |
+          choco install sqlserver-cmdlineutils -y
+        shell: powershell
+
+      - name: Deploy Synapse SQL scripts
+        run: |
+          ./synapse/deploy/deploy_synapse_sql.ps1 `
+            -SqlEndpoint "${{ secrets.SYNAPSE_SQL_ENDPOINT }}" `
+            -Database "${{ secrets.SYNAPSE_DATABASE }}" `
+            -SqlUser "${{ secrets.SYNAPSE_SQL_USER }}" `
+            -SqlPassword "${{ secrets.SYNAPSE_SQL_PASSWORD }}"
+        shell: powershell

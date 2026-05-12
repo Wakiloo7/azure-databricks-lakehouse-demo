@@ -1,0 +1,8 @@
+{
+  "synapseWorkspace": "your-synapse-workspace-name",
+  "sqlEndpoint": "your-synapse-workspace-name-ondemand.sql.azuresynapse.net",
+  "database": "lakehouse_gold_serving",
+  "storageAccount": "yourstorageaccount",
+  "container": "your-container-name",
+  "goldPath": "gold/"
+}
