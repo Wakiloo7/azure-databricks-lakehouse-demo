@@ -618,15 +618,3 @@ Possible causes:
 
 \---
 
-
-
-\## 8. Interview Explanation
-
-
-
-For performance, I would filter early, select only required columns, avoid unnecessary shuffles, broadcast small dimension tables, and use partitioning based on access patterns such as order date or load date.
-
-
-
-For cost, I would use job clusters, autoscaling, incremental processing, curated Gold outputs, and Synapse views that avoid scanning raw data. In production, Delta optimization features like OPTIMIZE, ZORDER, and VACUUM would also help improve reliability and performance.
-

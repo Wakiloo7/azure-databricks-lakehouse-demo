@@ -572,15 +572,3 @@ For compliance, the platform should support:
 
 \---
 
-
-
-\## 12. Interview Explanation
-
-
-
-In this project, I added governance and lineage design documentation to show how the Medallion architecture would be controlled in production. The main lineage is source system to ADF, then ADLS Bronze, Databricks Silver and Gold, Synapse views, and BI consumers.
-
-
-
-In production, I would use Microsoft Purview for cataloging and lineage, Unity Catalog for Databricks permissions and governance, RBAC for access control, Key Vault for secrets, and audit logs for traceability.
-

@@ -564,15 +564,3 @@ In production, the same project could be extended with Data Vault modeling if mu
 
 \---
 
-
-
-\## 10. Interview Explanation
-
-
-
-This project uses a dimensional modeling approach in the Gold layer. Orders act as the fact table because they contain measurable business events such as quantity and amount. Customers, products, regions, and dates act as dimensions because they provide descriptive context for reporting.
-
-
-
-I would use Data Vault if the requirement was enterprise-level historical tracking and integration across multiple systems.
-

@@ -525,14 +525,3 @@ In production, this design should include:
 \---
 
 
-
-\## 9. Interview Explanation
-
-
-
-This project currently uses structured Parquet source files. I added ADF examples for SAP and Salesforce ingestion, and this source integration strategy explains how the design can support structured, semi-structured, and unstructured enterprise data.
-
-
-
-In production, ADF would land raw data into ADLS Bronze, and Databricks would process it through Silver and Gold layers depending on the source type and data quality rules.
-

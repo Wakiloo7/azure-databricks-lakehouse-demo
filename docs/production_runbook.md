@@ -642,15 +642,3 @@ preventive action
 
 \---
 
-
-
-\## 14. Interview Explanation
-
-
-
-A production runbook helps operate the pipeline reliably after deployment. For this project, I documented common failures such as ADF copy failure, Databricks notebook failure, schema mismatch, data quality failure, Synapse view failure, slow Spark jobs, and CI/CD deployment failure.
-
-
-
-In production, I would combine this runbook with monitoring, alerting, audit logs, and clear ownership so issues can be resolved quickly and safely.
-
