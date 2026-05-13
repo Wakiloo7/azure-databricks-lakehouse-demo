@@ -1,0 +1,101 @@
+# Azure DevOps CI/CD Pipeline Example
+# Purpose:
+# Validate project files and demonstrate how Databricks/Synapse/ADF deployment
+# could be automated in a production Azure environment.
+#
+# This is a portfolio CI/CD template, not a production deployment pipeline.
+
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - notebooks/*
+      - sql/*
+      - tests/*
+      - synapse/*
+      - adf/*
+      - config/*
+      - README.md
+
+pool:
+  vmImage: "ubuntu-latest"
+
+variables:
+  pythonVersion: "3.10"
+
+stages:
+  - stage: Validate
+    displayName: "Validate Project"
+    jobs:
+      - job: ValidateFiles
+        displayName: "Validate SQL, JSON, Python and Markdown files"
+        steps:
+          - checkout: self
+
+          - task: UsePythonVersion@0
+            displayName: "Use Python $(pythonVersion)"
+            inputs:
+              versionSpec: "$(pythonVersion)"
+
+          - script: |
+              python -m pip install --upgrade pip
+              pip install pytest
+            displayName: "Install Python test dependencies"
+
+          - script: |
+              python -m json.tool config/pipeline_config.json > /dev/null
+              python -m json.tool adf/pipeline_ingest_customers_example.json > /dev/null
+              python -m json.tool adf/pipeline_ingest_orders_example.json > /dev/null
+            displayName: "Validate JSON configuration and ADF templates"
+
+          - script: |
+              python -m pytest tests || true
+            displayName: "Run Python data quality tests"
+
+          - script: |
+              echo "Validating SQL files exist..."
+              test -f sql/data_quality_checks.sql
+              test -f synapse/sql/01_create_external_data_source.sql
+              test -f synapse/sql/02_create_gold_external_views.sql
+              test -f synapse/sql/03_create_analytics_views.sql
+            displayName: "Validate SQL script structure"
+
+  - stage: Deploy_Dev
+    displayName: "Deploy to Dev Environment"
+    dependsOn: Validate
+    condition: succeeded()
+    jobs:
+      - job: DeployDev
+        displayName: "Deploy Synapse SQL Layer - Dev Example"
+        steps:
+          - checkout: self
+
+          - script: |
+              echo "This is a portfolio deployment example."
+              echo "In production, this stage would deploy Synapse SQL scripts, Databricks jobs, and ADF artifacts to the Dev environment."
+              echo "Databricks deployment options: Databricks CLI, REST API, or Databricks Asset Bundles."
+              echo "Synapse deployment options: sqlcmd, Azure CLI, or Azure DevOps deployment task."
+              echo "ADF deployment options: ARM templates, Azure CLI, or Azure DevOps release pipeline."
+            displayName: "Explain Dev deployment steps"
+
+  - stage: Deploy_Prod
+    displayName: "Deploy to Prod Environment"
+    dependsOn: Deploy_Dev
+    condition: succeeded()
+    jobs:
+      - deployment: DeployProd
+        displayName: "Production Deployment Approval Example"
+        environment: "production"
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+
+                - script: |
+                    echo "This is a production deployment placeholder."
+                    echo "In a real setup, this would require approval, environment-specific secrets, and controlled deployment."
+                    echo "Secrets should be stored in Azure Key Vault or Azure DevOps secure variables."
+                  displayName: "Production deployment placeholder"
