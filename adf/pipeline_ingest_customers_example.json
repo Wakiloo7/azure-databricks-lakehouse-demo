@@ -1,0 +1,93 @@
+{
+  "name": "pipeline_ingest_customers_example",
+  "properties": {
+    "description": "Example Azure Data Factory pipeline for ingesting customer data from Salesforce or an external CRM source into ADLS Bronze landing zone.",
+    "parameters": {
+      "source_system": {
+        "type": "String",
+        "defaultValue": "salesforce"
+      },
+      "entity_name": {
+        "type": "String",
+        "defaultValue": "customers"
+      },
+      "load_date": {
+        "type": "String"
+      }
+    },
+    "activities": [
+      {
+        "name": "Copy_Customers_To_Bronze",
+        "type": "Copy",
+        "dependsOn": [],
+        "policy": {
+          "timeout": "01:00:00",
+          "retry": 3,
+          "retryIntervalInSeconds": 60
+        },
+        "typeProperties": {
+          "source": {
+            "type": "SalesforceSource",
+            "query": "SELECT Id, Name, AccountNumber, Region__c, Segment__c, LastModifiedDate FROM Account WHERE LastModifiedDate >= @{pipeline().parameters.load_date}"
+          },
+          "sink": {
+            "type": "ParquetSink",
+            "storeSettings": {
+              "type": "AzureBlobFSWriteSettings"
+            },
+            "formatSettings": {
+              "type": "ParquetWriteSettings"
+            }
+          }
+        },
+        "inputs": [
+          {
+            "referenceName": "ds_salesforce_customers",
+            "type": "DatasetReference"
+          }
+        ],
+        "outputs": [
+          {
+            "referenceName": "ds_adls_bronze_customers",
+            "type": "DatasetReference"
+          }
+        ]
+      },
+      {
+        "name": "Trigger_Databricks_Bronze_Notebook",
+        "type": "DatabricksNotebook",
+        "dependsOn": [
+          {
+            "activity": "Copy_Customers_To_Bronze",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ],
+        "policy": {
+          "timeout": "02:00:00",
+          "retry": 2,
+          "retryIntervalInSeconds": 120
+        },
+        "typeProperties": {
+          "notebookPath": "/Shared/medallion/Bronze_Layer",
+          "baseParameters": {
+            "source_system": "@pipeline().parameters.source_system",
+            "entity_name": "@pipeline().parameters.entity_name",
+            "load_date": "@pipeline().parameters.load_date"
+          }
+        },
+        "linkedServiceName": {
+          "referenceName": "ls_azure_databricks",
+          "type": "LinkedServiceReference"
+        }
+      }
+    ],
+    "annotations": [
+      "portfolio-example",
+      "adf-ingestion",
+      "salesforce-to-adls",
+      "bronze-layer"
+    ]
+  }
+}
